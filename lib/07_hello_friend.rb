@@ -7,7 +7,9 @@ class Friend
     else
       "Hello, #{name}!"
     end
-    
+
+    #Condensed alternative
+    # "Hello" + ((name == nil) ? "!" : ", #{name}!")
   end
 
 end

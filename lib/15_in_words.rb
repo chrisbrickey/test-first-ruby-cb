@@ -72,6 +72,28 @@ class Fixnum
       end
 
 
+      three_digit_proc = Proc.new do |write, left, final_string, mag|
+        x = hundreds_proc.call write, left, final_string, mag  #x = [local_left, final_string]
+        local_left = x[0]
+        final_string = x[1]
+
+        x = tens_proc.call write, local_left, final_string, mag  #x = [local_left, final_string]
+        local_left = x[0]
+        final_string = x[1]
+
+        final_string = ones_proc.call write, local_left, final_string, mag
+      end
+
+      two_digit_proc = Proc.new do |write, final_string, mag|
+        x = tens_proc.call 0, write, final_string, mag  #x = [local_left, final_string]
+        local_left = x[0]
+        final_string = x[1]
+
+        final_string = ones_proc.call write, local_left, final_string, mag
+      end
+
+
+
       final_string = String.new
       left = self
 
@@ -80,128 +102,120 @@ class Fixnum
       while i > 999
 
         if i <= 1_000_000  #THOUSANDS
+          mag = -3
           write = left / 1000
           left = left - (write * 1000)
 
           if write >= 100 #hundred thousands
-            x = hundreds_proc.call write, left, final_string, -3  #x = [local_left, final_string]
+            x = hundreds_proc.call write, left, final_string, mag  #x = [local_left, final_string]
             local_left = x[0]
             final_string = x[1]
 
-            x = tens_proc.call write, local_left, final_string, -3  #x = [local_left, final_string]
+            x = tens_proc.call write, local_left, final_string, mag  #x = [local_left, final_string]
             local_left = x[0]
             final_string = x[1]
 
-            final_string = ones_proc.call write, local_left, final_string, -3
+            final_string = ones_proc.call write, local_left, final_string, mag
 
           elsif write >= 10  #ten thousands
-            x = tens_proc.call 0, write, final_string, -3  #x = [local_left, final_string]
+            x = tens_proc.call 0, write, final_string, mag  #x = [local_left, final_string]
             local_left = x[0]
             final_string = x[1]
 \
-            final_string = ones_proc.call write, local_left, final_string, -3
+            final_string = ones_proc.call write, local_left, final_string, mag
 
           elsif write > 0   #single digit thousands
-            final_string = ones_proc.call 0, write, final_string, -3
+            final_string = ones_proc.call 0, write, final_string, mag
           end
 
           if write > 0
-            final_string += magnitude[-3] + " "
+            final_string += magnitude[mag] + " "
           end
 
 
         elsif i <= 1_000_000_000   #MILLIONS
+          mag = -4
           write = left / 1_000_000
           left = left - (write * 1_000_000)
 
           if write >= 100   #hundred millions
-            x = hundreds_proc.call write, left, final_string, -4  #x = [local_left, final_string]
+            x = hundreds_proc.call write, left, final_string, mag  #x = [local_left, final_string]
             local_left = x[0]
             final_string = x[1]
 
-            x = tens_proc.call write, local_left, final_string, -4  #x = [local_left, final_string]
+            x = tens_proc.call write, local_left, final_string, mag  #x = [local_left, final_string]
             local_left = x[0]
             final_string = x[1]
 
-            final_string = ones_proc.call write, local_left, final_string, -4
+            final_string = ones_proc.call write, local_left, final_string, mag
 
           elsif write >= 10    #ten millions
-            x = tens_proc.call 0, write, final_string, -4  #x = [local_left, final_string]
+            x = tens_proc.call 0, write, final_string, mag  #x = [local_left, final_string]
             local_left = x[0]
             final_string = x[1]
 
-            final_string = ones_proc.call write, local_left, final_string, -4
+            final_string = ones_proc.call write, local_left, final_string, mag
 
           elsif write > 0    #single digit millions
-            final_string = ones_proc.call 0, write, final_string, -4
+            final_string = ones_proc.call 0, write, final_string, mag
           end
 
           if write > 0
-            final_string += magnitude[-4] + " "
+            final_string += magnitude[mag] + " "
           end
 
+
         elsif i <= 1_000_000_000_000   #BILLIONS
-          # mag = -5
+          mag = -5
           write = left / 1_000_000_000
           left = left - (write * 1_000_000_000)
 
           if write >= 100   #hundred billions
-            x = hundreds_proc.call write, left, final_string, -5  #x = [local_left, final_string]
+            # three_digit_proc.call write, left, final_string, mag
+
+            x = hundreds_proc.call write, left, final_string, mag  #x = [local_left, final_string]
             local_left = x[0]
             final_string = x[1]
 
-            x = tens_proc.call write, local_left, final_string, -5  #x = [local_left, final_string]
+            x = tens_proc.call write, local_left, final_string, mag  #x = [local_left, final_string]
             local_left = x[0]
             final_string = x[1]
 
-            final_string = ones_proc.call write, local_left, final_string, -5
+            final_string = ones_proc.call write, local_left, final_string, mag
 
           elsif write >= 10    #ten billions
-            x = tens_proc.call 0, write, final_string, -5  #x = [local_left, final_string]
+            x = tens_proc.call 0, write, final_string, mag  #x = [local_left, final_string]
             local_left = x[0]
             final_string = x[1]
 
-            final_string = ones_proc.call write, local_left, final_string, -5
+            final_string = ones_proc.call write, local_left, final_string, mag
 
           elsif write > 0    #single digit billions
-            final_string = ones_proc.call 0, write, final_string, -5
+            final_string = ones_proc.call 0, write, final_string, mag
           end
 
           if write > 0
-            final_string += magnitude[-5] + " "
+            final_string += magnitude[mag] + " "
           end
 
 
-
         elsif i <= 1_000_000_000_000_000   #TRILLIONS
-          # mag = -6
+          mag = -6
           write = left / 1_000_000_000_000
           left = left - (write * 1_000_000_000_000)
 
           if write >= 100   #hundred trillions
-            x = hundreds_proc.call write, left, final_string, -6  #x = [local_left, final_string]
-            local_left = x[0]
-            final_string = x[1]
-
-            x = tens_proc.call write, local_left, final_string, -6  #x = [local_left, final_string]
-            local_left = x[0]
-            final_string = x[1]
-
-            final_string = ones_proc.call write, local_left, final_string, -6
+            three_digit_proc.call write, left, final_string, mag
 
           elsif write >= 10    #ten trillions
-            x = tens_proc.call 0, write, final_string, -6  #x = [local_left, final_string]
-            local_left = x[0]
-            final_string = x[1]
-
-            final_string = ones_proc.call write, local_left, final_string, -6
+            two_digit_proc.call write, final_string, mag
 
           elsif write > 0    #single digit trillions
-            final_string = ones_proc.call 0, write, final_string, -6
+            final_string = ones_proc.call 0, write, final_string, mag
           end
 
           if write > 0
-            final_string += magnitude[-6] + " "
+            final_string += magnitude[mag] + " "
           end
 
 

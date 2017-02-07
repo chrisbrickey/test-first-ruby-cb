@@ -57,19 +57,56 @@ class Fixnum
         left = left - (write * 1000)
         print "write: #{write}       left: #{left}\n"
 
-        if write >= 100   #hundred thousands
+        if write >= 100   #hundred thousands e.g. 982_536; write = 982....left = 536 (need this for below loop)
           print "entering hundreds of thousands\n"
-          final_string += ones_string[write - 1] + " "
-          # final_string += magnitude_label[-2] + " "
+
+          #HUNDREDS PLACE for larger numbers
+          print "entered hundreds method\n"
+          print "write: #{write}       left: #{left}\n"
+          local_write = write/100              #e.g. 9 from 982
+          local_left =  (write.to_i) - (local_write * 100) #subtract off the hundreds   e.g. 82 from 982
+          print "local_write: #{local_write}       local_left: #{local_left}\n"
+
+          if local_write > 0
+            final_string += ones_string[local_write - 1] + " " + magnitude_label[-1] + " "
+            print final_string + "!!\n"
+          end
+
+          #TENS PLACE for larger numbers
+          print "entered tens method\n"
+          print "local_write: #{local_write}       local_left: #{local_left}\n"   #should be 9, 82
+          local_write = local_left/10              #e.g. 8 from 82
+          local_left =  (local_left.to_i) - (local_write * 10) #subtract off the tens   e.g. 2 from 32
+          print "local_write: #{local_write}       local_left: #{local_left}\n"  #should be 8, 2
+
+          if (local_write == 1) and (local_left > 0)   #teens
+            final_string += teens_string[local_left - 1] + " "
+            final_string += magnitude_label[-2] + " "
+            print final_string + "!!\n"
+            local_left = 0
+          else #10, 20, 30.....
+            final_string += tens_string[local_write - 1] + " "
+            print final_string + "!!\n"
+          end
+
+          #ONES PLACE for larger numbers
+          print "entered ones method\n"
+          local_write = local_left
+          local_left = 0    #subtract off the ones
+          print "local_write: #{local_write}       local_left: #{local_left}\n"
+
+          if local_write > 0
+            final_string += ones_string[local_write - 1] + " "
+            final_string += magnitude_label[-2] + " "
+            print final_string + "!!\n"
+          end
+
           print final_string + "!!\n"
 
         elsif write >= 10    #tens of thousands (e.g. write = 32)
           print "entering tens of thousands\n"
-          # final_string += tens_string[write - 1] + " "
-          # final_string += magnitude_label[-2] + " "
-          # print final_string + "!!\n"
 
-          #TENS PLACE for larger numbers...may need to re-assign write and left so can still use them later below (outside the loop for actual 100's, 10's, ones)
+          #TENS PLACE for larger numbers
           print "entered tens method\n"
           print "write: #{write}       left: #{left}\n"
           local_write = write/10              #e.g. 3 from 32
@@ -101,6 +138,7 @@ class Fixnum
           print final_string + "!!\n"
 
       elsif write > 0    #single digit thousands
+        #ONES PLACE for larger numbers
         "entering single thousands"
         final_string += ones_string[write - 1] + " "
         final_string += magnitude_label[-2] + " "
@@ -110,46 +148,12 @@ class Fixnum
       print final_string + "!!\n"
 
 
-        # if write > 0
-        #   #TENS PLACE for larger numbers
-        #   print "entered tens method\n"
-        #   write = left/10
-        #   left = left - (write * 10) #subtract off the tens
-        #   print "write: #{write}       left: #{left}\n"
-        #
-        #   if write > 0
-        #
-        #     if (write == 1) and (left > 0)   #SPECIAL CASE FOR TEENAGERS
-        #       final_string += teens_string[left - 1] + " "
-        #       print final_string + "!!\n"
-        #       left = 0
-        #     else      #FOR 20+
-        #       final_string += tens_string[write - 1] + " "
-        #       print final_string + "!!\n"
-        #     end
-        #
-        #       #ONES PLACE for larger numbers
-        #       print "entered ones method\n"
-        #       write = left
-        #       left = 0    #subtract off the ones
-        #       print "write: #{write}       left: #{left}\n"
-        #
-        #       if write > 0
-        #         final_string += ones_string[write - 1] + " "
-        #         print final_string + "!!\n"
-        #       end
-        #
-        #       print final_string + "!!\n"
-        #       final_string
-        #   end
-        #
-        # end
-        i -= 1000    #change this to take a base 10
-        j += 1
-        x = [left, final_string]
-        print x
-        print "above is the x-array\n"
-      end #end of while loop
+      i -= 1000    #change this to take a base 10
+      j += 1
+      x = [left, final_string]
+      print x
+      print "above is the x-array\n"
+    end #end of while loop
 
 
       #to make hundreds work outside the loop, I changed all x[0] below to left because they were not equivalent

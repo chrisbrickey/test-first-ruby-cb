@@ -1,7 +1,5 @@
 class XmlDocument
 
-  # attr_accessor :hello
-
   def send tag_name #tag_name is an array of string literal letters
     "<#{tag_name}/>"
   end

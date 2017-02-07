@@ -70,7 +70,7 @@ describe Fixnum do
     expect(77.in_words).to eq("seventy seven")
     expect(99.in_words).to eq("ninety nine")
   end
-
+  
   it "reads hundreds" do
     expect(100.in_words).to eq("one hundred")
     expect(200.in_words).to eq("two hundred")
@@ -83,11 +83,11 @@ describe Fixnum do
   end
 
   it "reads thousands" do
-    expect(999000.in_words).to eq("nine hundred ninety nine thousand")
     expect(1000.in_words).to eq("one thousand")
     expect(5834.in_words).to eq("five thousand eight hundred thirty four")  #cb added this test
     expect(32767.in_words).to eq("thirty two thousand seven hundred sixty seven")
     expect(32768.in_words).to eq("thirty two thousand seven hundred sixty eight")
+    expect(999000.in_words).to eq("nine hundred ninety nine thousand")
   end
 
   it "reads millions" do

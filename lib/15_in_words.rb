@@ -174,22 +174,34 @@ class Fixnum
         elsif write >= 10    #tens of thousands (e.g. write = 32)
           print "entering tens of thousands\n"
 
-          #TENS PLACE for larger numbers
-          print "entered tens method\n"
-          print "write: #{write}       left: #{left}\n"
-          local_write = write/10              #e.g. 3 from 32
-          local_left =  (write.to_i) - (local_write * 10) #subtract off the tens   e.g. 2 from 32
-          print "local_write: #{local_write}       local_left: #{local_left}\n"
 
-          if (local_write == 1) and (local_left > 0)   #teens
-            final_string += teens_string[local_left - 1] + " "
-            final_string += magnitude[-3] + " "
-            print final_string + "!!\n"
-            local_left = 0
-          else #10, 20, 30.....
-            final_string += tens_string[local_write - 1] + " "
-            print final_string + "!!\n"
-          end
+          #TENS PLACE for larger numbers WITH PROC
+          print "about to call tens PROC\n"
+          x = tens_proc.call 0, write, final_string, -3  #x = [local_left, final_string]
+          local_left = x[0]
+          final_string = x[1]
+          print "after calling tens PROC\n"
+          print "local_write: #{local_write}       local_left: #{local_left}\n"
+          print final_string + "!!\n"
+
+
+
+          #TENS PLACE for larger numbers without Proc (may need to pull back)
+          # print "entered tens method\n"
+          # print "write: #{write}       left: #{left}\n"
+          # local_write = write/10              #e.g. 3 from 32
+          # local_left =  (write.to_i) - (local_write * 10) #subtract off the tens   e.g. 2 from 32
+          # print "local_write: #{local_write}       local_left: #{local_left}\n"
+          #
+          # if (local_write == 1) and (local_left > 0)   #teens
+          #   final_string += teens_string[local_left - 1] + " "
+          #   final_string += magnitude[-3] + " "
+          #   print final_string + "!!\n"
+          #   local_left = 0
+          # else #10, 20, 30.....
+          #   final_string += tens_string[local_write - 1] + " "
+          #   print final_string + "!!\n"
+          # end
 
 
           #ONES PLACE for larger numbers WITH PROC

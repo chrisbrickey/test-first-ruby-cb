@@ -27,7 +27,7 @@ class Fixnum
             final_string += magnitude[mag] + " "
             print final_string + "!!\n"
             local_left = 0
-          else  #handling 10, 20 30
+          elsif  (local_write > 0)  #handling 10, 20 30
             final_string += tens_string[local_write - 1] + " "
             print final_string + "!!\n"
           end
@@ -36,7 +36,7 @@ class Fixnum
             final_string += teens_string[local_left - 1] + " "
             print final_string + "!!\n"
             local_left = 0
-          else #handling 10, 20 30
+          elsif (local_write > 0) #handling 10, 20 30
             final_string += tens_string[local_write - 1] + " "
             print final_string + "!!\n"
           end
@@ -59,8 +59,10 @@ class Fixnum
       #=========begining of ones proc=======================
       ones_proc = Proc.new do |local_write, local_left, final_string, mag|  #mag = -3 for thousands
         print "entered ones proc\n"
+        print "local_write: #{local_write}       local_left: #{local_left} should mirror actual write and left for mag -1\n"
         local_write = local_left
         local_left = 0    #subtract off the ones
+        print "after adjusting the inputs...\n"
         print "local_write: #{local_write}       local_left: #{local_left}\n"
 
         if (local_write > 0) && (mag < -1)  #handling hundreds or higher...mag = -2, -3, etc
@@ -146,23 +148,6 @@ class Fixnum
           print final_string + "!!\n"
 
 
-          # #TENS PLACE for larger numbers WITHOUT PROC (may need to bring back)
-          # print "entered tens method\n"
-          # print "local_write: #{local_write}       local_left: #{local_left}\n"   #should be 9, 82
-          # local_write = local_left/10              #e.g. 8 from 82
-          # local_left =  (local_left.to_i) - (local_write * 10) #subtract off the tens   e.g. 2 from 32
-          # print "local_write: #{local_write}       local_left: #{local_left}\n"  #should be 8, 2
-          #
-          # if (local_write == 1) and (local_left > 0)   #teens
-          #   final_string += teens_string[local_left - 1] + " "
-          #   final_string += magnitude[-3] + " "
-          #   print final_string + "!!\n"
-          #   local_left = 0
-          # else #10, 20, 30.....
-          #   final_string += tens_string[local_write - 1] + " "
-          #   print final_string + "!!\n"
-          # end
-
           #ONES PLACE for larger numbers WITH PROC
           print "about to call ones PROC\n"
           final_string = ones_proc.call local_write, local_left, final_string, -3
@@ -183,25 +168,6 @@ class Fixnum
           print "after calling tens PROC\n"
           print "local_write: #{local_write}       local_left: #{local_left}\n"
           print final_string + "!!\n"
-
-
-
-          #TENS PLACE for larger numbers without Proc (may need to pull back)
-          # print "entered tens method\n"
-          # print "write: #{write}       left: #{left}\n"
-          # local_write = write/10              #e.g. 3 from 32
-          # local_left =  (write.to_i) - (local_write * 10) #subtract off the tens   e.g. 2 from 32
-          # print "local_write: #{local_write}       local_left: #{local_left}\n"
-          #
-          # if (local_write == 1) and (local_left > 0)   #teens
-          #   final_string += teens_string[local_left - 1] + " "
-          #   final_string += magnitude[-3] + " "
-          #   print final_string + "!!\n"
-          #   local_left = 0
-          # else #10, 20, 30.....
-          #   final_string += tens_string[local_write - 1] + " "
-          #   print final_string + "!!\n"
-          # end
 
 
           #ONES PLACE for larger numbers WITH PROC
@@ -246,28 +212,44 @@ class Fixnum
         print final_string + "!!\n"
       end
 
-      #TENS PLACE
-      print "entered actual tens place\n"
-      print "write: #{write}       left: #{left}         x[0]:#{x[0]}\n"
-      write = left / 10
-      left = left - (write * 10) #subtract off the tens
-      print "write: #{write}       left: #{left}         x[0]:#{x[0]}\n"
 
-      if write > 0
-        if (write == 1) and (left > 0)   #special case for teens
-          final_string += teens_string[left - 1] + " "
-          print final_string + "!!\n"
-          left = 0
-        else  #10, 20, 30........
-          final_string += tens_string[write - 1] + " "
-          print final_string + "!!\n"
-        end
-      end
+      #TENS PLACE with Proc
+      print "entered actual tens place\n"
+      print "about to call tens PROC\n"
+      x = tens_proc.call write, left, final_string, -1  #x = [local_left, final_string]
+      local_left = x[0]
+      final_string = x[1]
+      print "after calling tens PROC\n"
+      print "local_write: #{local_write}       local_left: #{local_left}\n"
+      print final_string + "!!\n"
+
+
+
+      #TENS PLACE without Proc (may need to call back)
+      # print "entered actual tens place\n"
+      # print "write: #{write}       left: #{left}         x[0]:#{x[0]}\n"
+      # write = left / 10
+      # left = left - (write * 10) #subtract off the tens
+      # print "write: #{write}       left: #{left}         x[0]:#{x[0]}\n"
+      #
+      # if write > 0
+      #   if (write == 1) and (left > 0)   #special case for teens
+      #     final_string += teens_string[left - 1] + " "
+      #     print final_string + "!!\n"
+      #     left = 0
+      #   else  #10, 20, 30........
+      #     final_string += tens_string[write - 1] + " "
+      #     print final_string + "!!\n"
+      #   end
+      # end
 
 
       #ONES PLACE WITH PROC
+      print "entered actual ones place\n"
+      print "write: #{write}       left: #{left}\n"
+      print "local_write: #{local_write}       local_left: #{local_left}\n"
       print "about to call ones PROC\n"
-      final_string = ones_proc.call write, left, final_string, -1
+      final_string = ones_proc.call local_write, local_left, final_string, -1
       print "after calling ones PROC\n"
       print "local_write: #{local_write}       local_left: #{local_left}\n"
       print final_string + "!!\n"

@@ -1,6 +1,7 @@
 class Fixnum
 
   def in_words
+    print "===================NEW TEST======================="
 
       if self == 0
         return "zero"
@@ -47,9 +48,23 @@ class Fixnum
         left = left - (write * i)    #the number left to process
         print "write: #{write}       left: #{left}\n"
 
+
+
+
+        #HUNDREDS PLACE
+        print "entered hundreds place\n"
+        write = left / 100
+        left = left - (write * 100)
+        print "write: #{write}       left: #{left}\n"
+
+        if write > 0
+          final_string += ones_string[write - 1] + magnitude_label[-1] + " "
+        end
+
+
         if write > 0
           #TENS PLACE for larger numbers
-          print "entering tens method\n"
+          print "entered tens method\n"
           write = left/10
           left = left - (write * 10) #subtract off the tens
           print "write: #{write}       left: #{left}\n"
@@ -64,7 +79,7 @@ class Fixnum
             end
 
               #ONES PLACE for larger numbers
-              print "entering ones method\n"
+              print "entered ones method\n"
               write = left
               left = 0    #subtract off the ones
               print "write: #{write}       left: #{left}\n"
@@ -74,11 +89,12 @@ class Fixnum
               end
               final_string
           end
-          final_string += magnitude_label[j] + " "
+          # final_string += magnitude_label[j] + " "
 
-          if left > 0
-            final_string += ' '
-          end
+          # if left > 0
+          #   final_string += ' '
+          # end
+
         end
           # i - 1000
         i -= 100
@@ -89,7 +105,7 @@ class Fixnum
       end
 
       #TENS PLACE
-      print "entering actual tens place\n"
+      print "entered actual tens place\n"
       write = x[0]/10
       left = x[0] - (write * 10) #subtract off the tens
       print "write: #{write}       left: #{left}\n"
@@ -106,7 +122,7 @@ class Fixnum
       end
 
       #ONES PLACE
-      print "entering actual ones place\n"
+      print "entered actual ones place\n"
       write = left
       left = 0    #subtract off the ones
       print "write: #{write}       left: #{left}\n"

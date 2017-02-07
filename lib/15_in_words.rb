@@ -24,7 +24,8 @@ class Fixnum
         print "local_write: #{local_write}       local_left: #{local_left}\n"
 
         if local_write > 0
-          final_string += ones_string[local_write - 1] + " " + magnitude[-2] + " "
+          final_string += ones_string[local_write - 1] + " "
+          final_string += magnitude[-2] + " "
         end
 
         print "about to exit hundreds proc\n"
@@ -53,20 +54,20 @@ class Fixnum
           if (local_write == 1) && (local_left > 0)  #teens
             final_string += teens_string[local_left - 1] + " "
             final_string += magnitude[mag] + " "
-            print final_string + "!!\n"
             local_left = 0
           elsif  (local_write > 0)  #handling 10, 20 30
             final_string += tens_string[local_write - 1] + " "
-            print final_string + "!!\n"
+            if local_write == 1
+              final_string += magnitude[mag] + " "
+            end
           end
+
         else  #handling small numbers (mag == -1 (blank))
           if (local_write == 1) && (local_left > 0)  #teens
             final_string += teens_string[local_left - 1] + " "
-            print final_string + "!!\n"
             local_left = 0
           elsif (local_write > 0) #handling 10, 20 30
             final_string += tens_string[local_write - 1] + " "
-            print final_string + "!!\n"
           end
         end
 
@@ -95,11 +96,9 @@ class Fixnum
 
         if (local_write > 0) && (mag < -1)  #handling hundreds or higher...mag = -2, -3, etc
           final_string += ones_string[local_write - 1] + " "
-          final_string += magnitude[mag] + " "
-          print final_string + "!!\n"
+          # final_string += magnitude[mag] + " "
         elsif (local_write > 0) #handling small numbers...mag == -1 (blank)
           final_string += ones_string[local_write - 1] + " "
-          print final_string + "!!\n"
         end
 
         print final_string + "!!\n"
@@ -107,10 +106,10 @@ class Fixnum
       end
       #=========end of ones proc=======================
 
-      final_string = ''
+      final_string = String.new
       left = self
       write = 0
-      x = [left, final_string]
+      # x = [left, final_string]
 
       if left < 1_000
         i = 1000
@@ -136,33 +135,26 @@ class Fixnum
         i = 10_000_000_000_000
       end
 
-      while i > 999
+      while i > 999  #kicks us out of the loop so that last three digits are determined at the bottom
         print "i = #{i}\n"
         print "entered the LOOP\n"
-        j = 0
-        write = left / i               #the number we are working with now
-        left = left - (write * i)     #the number left to process
-        print "write: #{write}       left: #{left}\n"
+        # j = 0
 
         if i <= 1_000_000
-          #THOUSANDS PLACE (i == 1000)
+          #THOUSANDS PLACE (i != 1000)
           print "entered thousands place in the loop\n"
           write = left / 1000
           left = left - (write * 1000)
-          print "write: #{write}       left: #{left}\n"
 
           if write >= 100   #hundred thousands e.g. 982_536; write = 982....left = 536 (need this for below loop)
             print "entering hundreds of thousands\n"
 
             #HUNDREDS PLACE for larger numbers with Proc
             print "entered hundreds method\n"
-            print "write: #{write}       left: #{left}\n"
             print "about to call hundreds PROC\n"
             x = hundreds_proc.call write, left, final_string, -3  #x = [local_left, final_string]
             local_left = x[0]
             final_string = x[1]
-            print "after calling hundreds PROC....\n"
-            print "     local_left: #{local_left}\n"
             print final_string + "!!\n"
 
 
@@ -171,16 +163,12 @@ class Fixnum
             x = tens_proc.call write, local_left, final_string, -3  #x = [local_left, final_string]
             local_left = x[0]
             final_string = x[1]
-            print "after calling tens PROC\n"
-            print "  local_left: #{local_left}\n"
             print final_string + "!!\n"
 
 
             #ONES PLACE for larger numbers WITH PROC
             print "about to call ones PROC\n"
             final_string = ones_proc.call write, local_left, final_string, -3
-            print "after calling ones PROC\n"
-            print "    local_left: #{local_left}\n"
             print final_string + "!!\n"
 
 
@@ -193,73 +181,128 @@ class Fixnum
             x = tens_proc.call 0, write, final_string, -3  #x = [local_left, final_string]
             local_left = x[0]
             final_string = x[1]
-            print "after calling tens PROC\n"
-            print "    local_left: #{local_left}\n"
             print final_string + "!!\n"
 
 
             #ONES PLACE for larger numbers WITH PROC
             print "about to call ones PROC\n"
             final_string = ones_proc.call write, local_left, final_string, -3
-            print "after calling ones PROC\n"
-            print "    local_left: #{local_left}\n"
             print final_string + "!!\n"
 
 
         elsif write > 0    #single digit thousands
 
           #ONES PLACE for larger numbers WITH PROC
+          print "entered single thousands\n"
           print "about to call ones PROC\n"
           final_string = ones_proc.call 0, write, final_string, -3
-          print "after calling ones PROC\n"
-          print "    local_left: #{local_left}\n"
           print final_string + "!!\n"
 
         end
-      end  #of if i === 1000
+
+        if write > 0
+          final_string += magnitude[-3] + " "
+        end
+
+      end  #of if i == 1000
+
+      if i <= 1_000_000_000
+        #MILLIONS PLACE (i == 1_000_000)
+        print "entered millions place in the loop\n"
+        write = left / 1_000_000   # this is probably i
+        print write
+        print "\n"
+        left = left - (write * 1_000_000)
+        print left
+        print "\n"
+
+
+        if write >= 100   #hundred millions
+          print "entering hundreds of millions\n"
+
+          #HUNDREDS PLACE for larger numbers with Proc
+          print "entered hundreds method for millions\n"
+          print "about to call hundreds PROC\n"
+          x = hundreds_proc.call write, left, final_string, -4  #x = [local_left, final_string]
+          local_left = x[0]
+          final_string = x[1]
+          print final_string + "!!\n"
+
+
+          #TENS PLACE for larger numbers WITH PROC
+          print "entered tens method for millions\n"
+          print "about to call tens PROC\n"
+          x = tens_proc.call write, local_left, final_string, -4  #x = [local_left, final_string]
+          local_left = x[0]
+          final_string = x[1]
+          print final_string + "!!\n"
+
+
+          #ONES PLACE for larger numbers WITH PROC
+          print "entered ones method for millions\n"
+          print "about to call ones PROC\n"
+          final_string = ones_proc.call write, local_left, final_string, -4
+          print final_string + "!!\n"
+
+
+        elsif write >= 10    #tens of thousands (e.g. write = 32)
+          print "entering tens of millions\n"
+
+          #TENS PLACE for larger numbers WITH PROC
+          print "about to call tens PROC\n"
+          x = tens_proc.call 0, write, final_string, -4  #x = [local_left, final_string]
+          local_left = x[0]
+          final_string = x[1]
+          print final_string + "!!\n"
+
+
+          #ONES PLACE for larger numbers WITH PROC
+          print "about to call ones PROC\n"
+          print write
+          print "\n"
+          print local_left
+          print "\n"
+          final_string = ones_proc.call write, local_left, final_string, -4
+          print final_string + "!!\n"
+
+
+      elsif write > 0    #single digit millions
+
+        #ONES PLACE for larger numbers WITH PROC
+        print "entered single millions\n"
+        print "about to call ones PROC\n"
+        final_string = ones_proc.call 0, write, final_string, -4
+        print final_string + "!!\n"
+
+      end
+
+    end  #of if i == 1_000_000
 
       print final_string + "!!\n"
 
-
-      i -= 1000    #change this to take a base 10
-      j += 1
-      x = [left, final_string]
-      print x
-      print "above is the x-array\n"
+      # j += 1
+      i /= 10
     end #end of while loop========================================================
 
 
       #HUNDREDS PLACE with a Proc
       print "entered actual hundreds place\n"
-      print "write: #{write}       left: #{left}\n"
-      print "about to call hundreds PROC\n"
       x = hundreds_proc.call left, write, final_string, -2  #x = [local_left, final_string]
       local_left = x[0]
       final_string = x[1]
-      print "after calling hundreds PROC....\n"
-      print "     local_left: #{local_left}\n"
       print final_string + "!!\n"
 
 
       #TENS PLACE with Proc
       print "entered actual tens place\n"
-      print "write: #{write}       left: #{left}   local_left: #{local_left}\n"
-      print "about to call tens PROC\n"
       x = tens_proc.call write, local_left, final_string, -1  #x = [local_left, final_string]
       local_left = x[0]
       final_string = x[1]
-      print "after calling tens PROC\n"
-      print "      local_left: #{local_left}\n"
       print final_string + "!!\n"
 
       #ONES PLACE WITH PROC
       print "entered actual ones place\n"
-      print "write: #{write}       left: #{left}\n"
-      print "     local_left: #{local_left}\n"
-      print "about to call ones PROC\n"
       final_string = ones_proc.call write, local_left, final_string, -1
-      print "after calling ones PROC\n"
-      print "     local_left: #{local_left}\n"
       print final_string + "!!\n"
 
 

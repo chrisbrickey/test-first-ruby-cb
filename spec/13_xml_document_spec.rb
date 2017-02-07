@@ -49,6 +49,8 @@ describe XmlDocument do
 
     xml_string = xml.hello do
       xml.goodbye do
+      # end
+      # end
         xml.come_back do
           xml.ok_fine(:be => "that_way")
         end

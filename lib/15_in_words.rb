@@ -58,20 +58,56 @@ class Fixnum
         print "write: #{write}       left: #{left}\n"
 
         if write >= 100   #hundred thousands
+          print "entering hundreds of thousands\n"
           final_string += ones_string[write - 1] + " "
-          final_string += magnitude_label[-2] + " "
+          # final_string += magnitude_label[-2] + " "
           print final_string + "!!\n"
 
-        elsif write >= 10    #tens of thousands
-          final_string += tens_string[write - 1] + " "
-          final_string += magnitude_label[-2] + " "
+        elsif write >= 10    #tens of thousands (e.g. write = 32)
+          print "entering tens of thousands\n"
+          # final_string += tens_string[write - 1] + " "
+          # final_string += magnitude_label[-2] + " "
+          # print final_string + "!!\n"
+
+          #TENS PLACE for larger numbers...may need to re-assign write and left so can still use them later below (outside the loop for actual 100's, 10's, ones)
+          print "entered tens method\n"
+          print "write: #{write}       left: #{left}\n"
+          local_write = write/10              #e.g. 3 from 32
+          local_left =  (write.to_i) - (local_write * 10) #subtract off the tens   e.g. 2 from 32
+          print "local_write: #{local_write}       local_left: #{local_left}\n"
+
+          if (local_write == 1) and (local_left > 0)   #teens
+            final_string += teens_string[local_left - 1] + " "
+            final_string += magnitude_label[-2] + " "
+            print final_string + "!!\n"
+            local_left = 0
+          else #10, 20, 30.....
+            final_string += tens_string[local_write - 1] + " "
+            print final_string + "!!\n"
+          end
+
+          #ONES PLACE for larger numbers
+          print "entered ones method\n"
+          local_write = local_left
+          local_left = 0    #subtract off the ones
+          print "local_write: #{local_write}       local_left: #{local_left}\n"
+
+          if local_write > 0
+            final_string += ones_string[local_write - 1] + " "
+            final_string += magnitude_label[-2] + " "
+            print final_string + "!!\n"
+          end
+
           print final_string + "!!\n"
 
-        elsif write > 0    #single digit thousands
-          final_string += ones_string[write - 1] + " "
-          final_string += magnitude_label[-2] + " "
-          print final_string + "!!\n"
-        end
+      elsif write > 0    #single digit thousands
+        "entering single thousands"
+        final_string += ones_string[write - 1] + " "
+        final_string += magnitude_label[-2] + " "
+        print final_string + "!!\n"
+      end
+
+      print final_string + "!!\n"
 
 
         # if write > 0
@@ -156,6 +192,7 @@ class Fixnum
         final_string += ones_string[write - 1] + " "
         print final_string + "!!\n"
       end
+
 
       print final_string + "!!\n"
       final_string.chop

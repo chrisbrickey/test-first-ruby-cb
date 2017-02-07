@@ -70,7 +70,7 @@ describe Fixnum do
     expect(77.in_words).to eq("seventy seven")
     expect(99.in_words).to eq("ninety nine")
   end
-  
+
   it "reads hundreds" do
     expect(100.in_words).to eq("one hundred")
     expect(200.in_words).to eq("two hundred")

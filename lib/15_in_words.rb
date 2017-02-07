@@ -107,20 +107,27 @@ class Fixnum
             print final_string + "!!\n"
           end
 
-
-          #ONES PLACE for larger numbers WITHOUT PROC (pull this back if proc doesn't work)
-          print "entered ones method\n"
-          local_write = local_left
-          local_left = 0    #subtract off the ones
+          #ONES PLACE for larger numbers WITH PROC
+          print "about to call ones PROC\n"
+          final_string = ones_proc.call local_write, local_left, final_string, -2
+          print "after calling ones PROC\n"
           print "local_write: #{local_write}       local_left: #{local_left}\n"
-
-          if local_write > 0
-            final_string += ones_string[local_write - 1] + " "
-            final_string += magnitude[-2] + " "
-            print final_string + "!!\n"
-          end
-
           print final_string + "!!\n"
+
+
+          # #ONES PLACE for larger numbers WITHOUT PROC (pull this back if proc doesn't work)
+          # print "entered ones method\n"
+          # local_write = local_left
+          # local_left = 0    #subtract off the ones
+          # print "local_write: #{local_write}       local_left: #{local_left}\n"
+          #
+          # if local_write > 0
+          #   final_string += ones_string[local_write - 1] + " "
+          #   final_string += magnitude[-2] + " "
+          #   print final_string + "!!\n"
+          # end
+          #
+          # print final_string + "!!\n"
 
         elsif write >= 10    #tens of thousands (e.g. write = 32)
           print "entering tens of thousands\n"

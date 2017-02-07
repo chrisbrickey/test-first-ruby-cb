@@ -10,19 +10,22 @@ class Fixnum
       ones_string = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
       tens_string = ['ten', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']
       teens_string = ['eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen']
-      magnitude = ['trillion', 'billion', 'million', 'thousand', 'hundred']
+      magnitude = ['trillion', 'billion', 'million', 'thousand', 'hundred', ""]
 
 
       #=========begining of ones proc=======================
-      ones_proc = Proc.new do |local_write, local_left, final_string, mag|  #mag = -2 for thousands
+      ones_proc = Proc.new do |local_write, local_left, final_string, mag|  #mag = -3 for thousands
         print "entered ones proc\n"
         local_write = local_left
         local_left = 0    #subtract off the ones
         print "local_write: #{local_write}       local_left: #{local_left}\n"
 
-        if local_write > 0
+        if (local_write > 0) && (mag < -1)  #handling hundreds or higher...mag = -2, -3, etc
           final_string += ones_string[local_write - 1] + " "
           final_string += magnitude[mag] + " "
+          print final_string + "!!\n"
+        elsif (local_write > 0) #handling small numbers...mag == -1 (blank)
+          final_string += ones_string[local_write - 1] + " "
           print final_string + "!!\n"
         end
 
@@ -86,7 +89,7 @@ class Fixnum
           print "local_write: #{local_write}       local_left: #{local_left}\n"
 
           if local_write > 0
-            final_string += ones_string[local_write - 1] + " " + magnitude[-1] + " "
+            final_string += ones_string[local_write - 1] + " " + magnitude[-2] + " "
             print final_string + "!!\n"
           end
 
@@ -99,7 +102,7 @@ class Fixnum
 
           if (local_write == 1) and (local_left > 0)   #teens
             final_string += teens_string[local_left - 1] + " "
-            final_string += magnitude[-2] + " "
+            final_string += magnitude[-3] + " "
             print final_string + "!!\n"
             local_left = 0
           else #10, 20, 30.....
@@ -109,7 +112,7 @@ class Fixnum
 
           #ONES PLACE for larger numbers WITH PROC
           print "about to call ones PROC\n"
-          final_string = ones_proc.call local_write, local_left, final_string, -2
+          final_string = ones_proc.call local_write, local_left, final_string, -3
           print "after calling ones PROC\n"
           print "local_write: #{local_write}       local_left: #{local_left}\n"
           print final_string + "!!\n"
@@ -123,7 +126,7 @@ class Fixnum
           #
           # if local_write > 0
           #   final_string += ones_string[local_write - 1] + " "
-          #   final_string += magnitude[-2] + " "
+          #   final_string += magnitude[-3] + " "
           #   print final_string + "!!\n"
           # end
           #
@@ -141,7 +144,7 @@ class Fixnum
 
           if (local_write == 1) and (local_left > 0)   #teens
             final_string += teens_string[local_left - 1] + " "
-            final_string += magnitude[-2] + " "
+            final_string += magnitude[-3] + " "
             print final_string + "!!\n"
             local_left = 0
           else #10, 20, 30.....
@@ -152,7 +155,7 @@ class Fixnum
 
           #ONES PLACE for larger numbers WITH PROC
           print "about to call ones PROC\n"
-          final_string = ones_proc.call local_write, local_left, final_string, -2
+          final_string = ones_proc.call local_write, local_left, final_string, -3
           print "after calling ones PROC\n"
           print "local_write: #{local_write}       local_left: #{local_left}\n"
           print final_string + "!!\n"
@@ -165,7 +168,7 @@ class Fixnum
           #
           # if local_write > 0
           #   final_string += ones_string[local_write - 1] + " "
-          #   final_string += magnitude[-2] + " "
+          #   final_string += magnitude[-3] + " "
           #   print final_string + "!!\n"
           # end
           #
@@ -175,7 +178,7 @@ class Fixnum
 
         #ONES PLACE for larger numbers WITH PROC
         print "about to call ones PROC\n"
-        final_string = ones_proc.call local_write, write, final_string, -2
+        final_string = ones_proc.call local_write, write, final_string, -3
         print "after calling ones PROC\n"
         print "local_write: #{local_write}       local_left: #{local_left}\n"
         print final_string + "!!\n"
@@ -183,7 +186,7 @@ class Fixnum
         #ONES PLACE for larger numbers WITHOUT PROC
         # "entering single thousands"
         # final_string += ones_string[write - 1] + " "
-        # final_string += magnitude[-2] + " "
+        # final_string += magnitude[-3] + " "
         # print final_string + "!!\n"
       end
 
@@ -206,7 +209,7 @@ class Fixnum
       print "write: #{write}       left: #{left}\n"
 
       if write > 0
-        final_string += ones_string[write - 1] + " " + magnitude[-1] + " "
+        final_string += ones_string[write - 1] + " " + magnitude[-2] + " "
         print final_string + "!!\n"
       end
 
@@ -228,16 +231,24 @@ class Fixnum
         end
       end
 
-      #ONES PLACE
-      print "entered actual ones place\n"
-      write = left
-      left = 0    #subtract off the ones
-      print "write: #{write}       left: #{left}\n"
 
-      if write > 0
-        final_string += ones_string[write - 1] + " "
-        print final_string + "!!\n"
-      end
+      #ONES PLACE WITH PROC
+      print "about to call ones PROC\n"
+      final_string = ones_proc.call write, left, final_string, -1
+      print "after calling ones PROC\n"
+      print "local_write: #{local_write}       local_left: #{local_left}\n"
+      print final_string + "!!\n"
+
+      # #ONES PLACE without PROC (may need to pull this back)
+      # print "entered actual ones place\n"
+      # write = left
+      # left = 0    #subtract off the ones
+      # print "write: #{write}       left: #{left}\n"
+      #
+      # if write > 0
+      #   final_string += ones_string[write - 1] + " "
+      #   print final_string + "!!\n"
+      # end
 
 
       print final_string + "!!\n"

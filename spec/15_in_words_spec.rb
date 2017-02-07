@@ -91,13 +91,12 @@ describe Fixnum do
   end
 
   it "reads millions" do
-    # expect(10_000_001.in_words).to eq("ten million one")  #return to fix this bug
+    expect(10_000_001.in_words).to eq("ten million one")
     expect(103_300_000.in_words).to eq("one hundred three million three hundred thousand")
   end
 
   it "reads billions" do
     expect(1_234_567_890.in_words).to eq("one billion two hundred thirty four million five hundred sixty seven thousand eight hundred ninety")
-    # expect(10_000_000_001.in_words).to eq("ten billion one") #return to fix this bug, cb added this test
   end
 
   it "reads trillions" do

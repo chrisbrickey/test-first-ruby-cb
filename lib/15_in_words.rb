@@ -38,9 +38,6 @@ class Fixnum
             local_left = 0
           elsif  (local_write > 0)  #10, 20 30
             final_string += tens_string[local_write - 1] + " "
-            if local_write == 1
-              final_string += magnitude[mag] + " "
-            end
           end
 
         else  #handling small numbers
@@ -63,7 +60,6 @@ class Fixnum
 
         if (local_write > 0) && (mag < -1)  #handling hundreds or higher
           final_string += ones_string[local_write - 1] + " "
-          # final_string += magnitude[mag] + " "
         elsif (local_write > 0) #handling small numbers
           final_string += ones_string[local_write - 1] + " "
         end
@@ -171,8 +167,6 @@ class Fixnum
           left = left - (write * 1_000_000_000)
 
           if write >= 100   #hundred billions
-            # three_digit_proc.call write, left, final_string, mag
-
             x = hundreds_proc.call write, left, final_string, mag  #x = [local_left, final_string]
             local_left = x[0]
             final_string = x[1]

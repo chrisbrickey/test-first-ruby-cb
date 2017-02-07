@@ -10,8 +10,26 @@ class Fixnum
       ones_string = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
       tens_string = ['ten', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']
       teens_string = ['eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen']
-      magnitude_label = ['trillion', 'billion', 'million', 'thousand', 'hundred']
+      magnitude = ['trillion', 'billion', 'million', 'thousand', 'hundred']
 
+
+      #=========begining of ones proc=======================
+      ones_proc = Proc.new do |local_write, local_left, final_string, mag|  #mag = -2 for thousands
+        print "entered ones proc\n"
+        local_write = local_left
+        local_left = 0    #subtract off the ones
+        print "local_write: #{local_write}       local_left: #{local_left}\n"
+
+        if local_write > 0
+          final_string += ones_string[local_write - 1] + " "
+          final_string += magnitude[mag] + " "
+          print final_string + "!!\n"
+        end
+
+        print final_string + "!!\n"
+        final_string
+      end
+      #=========end of ones proc=======================
 
       final_string = ''
       left = self
@@ -68,7 +86,7 @@ class Fixnum
           print "local_write: #{local_write}       local_left: #{local_left}\n"
 
           if local_write > 0
-            final_string += ones_string[local_write - 1] + " " + magnitude_label[-1] + " "
+            final_string += ones_string[local_write - 1] + " " + magnitude[-1] + " "
             print final_string + "!!\n"
           end
 
@@ -81,7 +99,7 @@ class Fixnum
 
           if (local_write == 1) and (local_left > 0)   #teens
             final_string += teens_string[local_left - 1] + " "
-            final_string += magnitude_label[-2] + " "
+            final_string += magnitude[-2] + " "
             print final_string + "!!\n"
             local_left = 0
           else #10, 20, 30.....
@@ -89,7 +107,8 @@ class Fixnum
             print final_string + "!!\n"
           end
 
-          #ONES PLACE for larger numbers
+
+          #ONES PLACE for larger numbers WITHOUT PROC (pull this back if proc doesn't work)
           print "entered ones method\n"
           local_write = local_left
           local_left = 0    #subtract off the ones
@@ -97,7 +116,7 @@ class Fixnum
 
           if local_write > 0
             final_string += ones_string[local_write - 1] + " "
-            final_string += magnitude_label[-2] + " "
+            final_string += magnitude[-2] + " "
             print final_string + "!!\n"
           end
 
@@ -115,7 +134,7 @@ class Fixnum
 
           if (local_write == 1) and (local_left > 0)   #teens
             final_string += teens_string[local_left - 1] + " "
-            final_string += magnitude_label[-2] + " "
+            final_string += magnitude[-2] + " "
             print final_string + "!!\n"
             local_left = 0
           else #10, 20, 30.....
@@ -123,25 +142,33 @@ class Fixnum
             print final_string + "!!\n"
           end
 
-          #ONES PLACE for larger numbers
-          print "entered ones method\n"
-          local_write = local_left
-          local_left = 0    #subtract off the ones
+
+          #ONES PLACE for larger numbers WITH PROC
+          print "about to call ones PROC\n"
+          final_string = ones_proc.call local_write, local_left, final_string, -2
+          print "after calling ones PROC\n"
           print "local_write: #{local_write}       local_left: #{local_left}\n"
-
-          if local_write > 0
-            final_string += ones_string[local_write - 1] + " "
-            final_string += magnitude_label[-2] + " "
-            print final_string + "!!\n"
-          end
-
           print final_string + "!!\n"
+
+          # #ONES PLACE for larger numbers WITOUT PROC
+          # print "entered ones method\n"
+          # local_write = local_left
+          # local_left = 0    #subtract off the ones
+          # print "local_write: #{local_write}       local_left: #{local_left}\n"
+          #
+          # if local_write > 0
+          #   final_string += ones_string[local_write - 1] + " "
+          #   final_string += magnitude[-2] + " "
+          #   print final_string + "!!\n"
+          # end
+          #
+          # print final_string + "!!\n"
 
       elsif write > 0    #single digit thousands
         #ONES PLACE for larger numbers
         "entering single thousands"
         final_string += ones_string[write - 1] + " "
-        final_string += magnitude_label[-2] + " "
+        final_string += magnitude[-2] + " "
         print final_string + "!!\n"
       end
 
@@ -153,7 +180,7 @@ class Fixnum
       x = [left, final_string]
       print x
       print "above is the x-array\n"
-    end #end of while loop
+    end #end of while loop========================================================
 
 
       #to make hundreds work outside the loop, I changed all x[0] below to left because they were not equivalent
@@ -164,7 +191,7 @@ class Fixnum
       print "write: #{write}       left: #{left}\n"
 
       if write > 0
-        final_string += ones_string[write - 1] + " " + magnitude_label[-1] + " "
+        final_string += ones_string[write - 1] + " " + magnitude[-1] + " "
         print final_string + "!!\n"
       end
 

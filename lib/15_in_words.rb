@@ -172,11 +172,19 @@ class Fixnum
           # print final_string + "!!\n"
 
       elsif write > 0    #single digit thousands
-        #ONES PLACE for larger numbers
-        "entering single thousands"
-        final_string += ones_string[write - 1] + " "
-        final_string += magnitude[-2] + " "
+
+        #ONES PLACE for larger numbers WITH PROC
+        print "about to call ones PROC\n"
+        final_string = ones_proc.call local_write, write, final_string, -2
+        print "after calling ones PROC\n"
+        print "local_write: #{local_write}       local_left: #{local_left}\n"
         print final_string + "!!\n"
+
+        #ONES PLACE for larger numbers WITHOUT PROC
+        # "entering single thousands"
+        # final_string += ones_string[write - 1] + " "
+        # final_string += magnitude[-2] + " "
+        # print final_string + "!!\n"
       end
 
       print final_string + "!!\n"

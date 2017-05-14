@@ -1,66 +1,95 @@
-# class FixNum
-def in_words(number)
+class Fixnum
 
-  return "zero" if number == 0
-  final_string = String.new
-  digit_hash = digit_hash_constructor(number)
+  def in_words
+    return "zero" if self == 0
 
-  #loops through each 3-digit subarray
-  digit_hash.keys.each_with_index do |magnitude, index|
-    number_array = digit_hash[magnitude]
+    final_string = String.new
+    digit_hash = digit_hash_constructor(self)
 
-    next if number_array == [0, 0, 0] #true for all magnitudes
-    substring = create_string_from_number(number_array)
+    #loops through each 3-digit subarray
+    digit_hash.keys.reverse.each do |magnitude|
+      number_array = digit_hash[magnitude]
 
-    #last subarray is handled differently, doesn't end in "hundred"
-    if index == -1
-      final_string << "#{substring} "
-    else
-      final_string << "#{substring} #{magnitude.to_s} "
+      next if number_array == [0, 0, 0]
+      substring = create_string_from_number(number_array)
+
+      if magnitude == :hundred
+        final_string << "#{substring} "
+      else
+        final_string << "#{substring} #{magnitude.to_s} "
+      end
+
     end
 
+    final_string.split(/\s+/).join(" ")
   end
 
-  final_string.chop
-end#of in_words method
 
 
-def digit_hash_constructor(number)
+  def create_string_from_number(number_array)
+    ones_words = [nil, "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+    teens_words = [nil, "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"]
+    tens_words = [nil, "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"]
 
-  digit_hash = Hash.new
-  magnitude_hash= {
-    -1 => :hundred,
-    -4 => :thousand,
-    -7 => :million,
-    -10 => :billion,
-    -13 => :trillion,
-    -16 => :quadrillion
-  }
-  digit_array = number.to_s.chars.map {|digit_str| digit_str.to_i }
+    substring = String.new
+    hundreds_digit, tens_digit, ones_digit = number_array
 
-  #this block constructs the digit_hash for complete 3-digit arrays (e.g. the 000's in 1_000)
-  index = -1
-  (digit_array.length / 3).times do
-    digit_hash[magnitude_hash[index]] = [digit_array[index - 2],
-                                         digit_array[index - 1],
-                                         digit_array[index]]
-    index -= 3
-  end
-
-  #this block finishes construction of the digit_hash for digits that don't complete a 3-digit array (e.g. the 1 in 1_000)
-  leftovers = digit_array.length % 3
-  incomplete_subarray =
-    case leftovers
-    when 1 then [0, 0, digit_array[index]]
-    when 2 then [0, digit_array[index - 1], digit_array[index]]
+    #handles hundreds place if it has value
+    if hundreds_digit != 0
+      substring << "#{ones_words[hundreds_digit]} hundred "
     end
-  digit_hash[magnitude_hash[index]] = [incomplete_subarray] if leftovers != 0
 
-  digit_hash
-end
+    #handles both tens_place and ones_place
+    if tens_digit == 0 && ones_digit != 0     #tens/ones place < 10
+      substring << "#{ones_words[ones_digit]} "
 
-def create_string_from_number(number_array)
+    elsif tens_digit == 1 && ones_digit != 0   #tens/ones place is a teen
+      substring << "#{teens_words[ones_digit]} "
 
-end
+    elsif tens_digit > 0 && ones_digit == 0 #tens/ones place >= 10 but not a teen
+      substring << "#{tens_words[tens_digit]} "
 
-# end#of class
+    elsif tens_digit > 0                    #tens/ones place <= 10s and NOT a teen
+      substring << "#{tens_words[tens_digit]} #{ones_words[ones_digit]} "
+
+    end
+
+    substring
+  end
+
+
+  def digit_hash_constructor(number)
+    digit_hash = Hash.new
+    magnitude_hash= {
+      -1 => :hundred,
+      -4 => :thousand,
+      -7 => :million,
+      -10 => :billion,
+      -13 => :trillion,
+      -16 => :quadrillion
+    }
+
+    digit_array = number.to_s.chars.map {|digit_str| digit_str.to_i }
+
+    #this block constructs the digit_hash for complete 3-digit arrays (e.g. the 000's in 1_000)
+    index = -1
+    (digit_array.length / 3).times do
+      digit_hash[magnitude_hash[index]] = [digit_array[index - 2],
+                                           digit_array[index - 1],
+                                           digit_array[index]]
+      index -= 3
+    end
+
+    #this block finishes construction of the digit_hash for digits that don't complete a 3-digit array (e.g. the 1 in 1_000)
+    leftovers = digit_array.length % 3
+    incomplete_subarray =
+      case leftovers
+      when 1 then [0, 0, digit_array[index]]
+      when 2 then [0, digit_array[index - 1], digit_array[index]]
+      end
+    digit_hash[magnitude_hash[index]] = incomplete_subarray if leftovers != 0
+
+    digit_hash
+  end
+
+end#of class
